@@ -25,7 +25,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**")              // protect all API endpoints
                 .excludePathPatterns(
                         "/api/users/register",           // public: customer registration
-                        "/api/users/login"               // public: login
+                        "/api/users/login",              // public: login
+                        "/api/airports",                 // public: airport list for search
+                        "/api/airports/**",              // public: single airport lookup
+                        "/api/scheduled-flights/search"  // public: flight search
                 );
     }
 }
