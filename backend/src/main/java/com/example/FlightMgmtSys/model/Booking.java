@@ -19,13 +19,13 @@ public class Booking {
     private BigDecimal ticketCost;
     private ScheduledFlight flight;
     private Integer noOfPassengers;
+    private String bookingState;
 
     public Booking() {
     }
 
     public Booking(BigInteger bookingId, User userId, LocalDate bookingDate,
-                   List<Passenger> passengerList, BigDecimal ticketCost,
-                   ScheduledFlight flight, Integer noOfPassengers) {
+                   ScheduledFlight flight, Integer noOfPassengers, String bookingState) {
         this.bookingId = bookingId;
         this.userId = userId;
         this.bookingDate = bookingDate;
@@ -33,6 +33,7 @@ public class Booking {
         this.ticketCost = ticketCost;
         this.flight = flight;
         this.noOfPassengers = noOfPassengers;
+        this.bookingState = bookingState;
     }
 
     // ---- Getters & Setters ----
@@ -93,6 +94,14 @@ public class Booking {
         this.noOfPassengers = noOfPassengers;
     }
 
+    public String getBookingState() {
+        return bookingState;
+    }
+
+    public void setBookingState(String bookingState) {
+        this.bookingState = bookingState;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -101,6 +110,7 @@ public class Booking {
                 ", bookingDate=" + bookingDate +
                 ", ticketCost=" + ticketCost +
                 ", noOfPassengers=" + noOfPassengers +
+                ", bookingState='" + bookingState + '\'' +
                 ", flight=" + flight +
                 '}';
     }

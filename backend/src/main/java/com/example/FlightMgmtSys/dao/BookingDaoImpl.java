@@ -73,6 +73,7 @@ public class BookingDaoImpl implements BookingDao {
         BigInteger bookingId = BigInteger.valueOf(keyHolder.getKey().longValue());
         booking.setBookingId(bookingId);
         booking.setBookingDate(bookingDate);
+        booking.setBookingState("CONFIRMED");
 
         // 2. Insert each passenger
         if (booking.getPassengerList() != null) {
@@ -95,6 +96,10 @@ public class BookingDaoImpl implements BookingDao {
             throw new RecordNotFoundException("Booking", booking.getBookingId());
         }
         Booking original = originalList.get(0);
+
+        if ("CANCELLED".equals(original.getBookingState())) {
+            throw new com.example.FlightMgmtSys.exception.ValidationException("Cannot modify a cancelled booking.");
+        }
 
         // Restore seats from the original booking
         updateAvailableSeats(original.getFlight().getScheduledFlightId(), original.getNoOfPassengers());
@@ -124,12 +129,14 @@ public class BookingDaoImpl implements BookingDao {
         // Decrement seats for the new booking
         updateAvailableSeats(booking.getFlight().getScheduledFlightId(), -booking.getNoOfPassengers());
 
+        booking.setBookingState("MODIFIED");
+
         return booking;
     }
 
     @Override
     public List<Booking> viewBooking(BigInteger bookingId) {
-        String sql = "SELECT * FROM booking WHERE booking_id = ? AND booking_state != 'CANCELLED'";
+        String sql = "SELECT * FROM booking WHERE booking_id = ?";
         List<Booking> bookings = jdbcTemplate.query(sql, getBookingRowMapper(), bookingId.longValue());
         if (bookings.isEmpty()) {
             throw new RecordNotFoundException("Booking", bookingId);
@@ -143,7 +150,7 @@ public class BookingDaoImpl implements BookingDao {
 
     @Override
     public List<Booking> viewBooking() {
-        String sql = "SELECT * FROM booking WHERE booking_state != 'CANCELLED'";
+        String sql = "SELECT * FROM booking";
         List<Booking> bookings = jdbcTemplate.query(sql, getBookingRowMapper());
         for (Booking b : bookings) {
             b.setPassengerList(loadPassengers(b.getBookingId()));
@@ -159,6 +166,10 @@ public class BookingDaoImpl implements BookingDao {
             throw new RecordNotFoundException("Booking", bookingId);
         }
         Booking booking = bookings.get(0);
+
+        if ("CANCELLED".equals(booking.getBookingState())) {
+            throw new com.example.FlightMgmtSys.exception.ValidationException("Booking is already cancelled.");
+        }
 
         // Soft-cancel the booking
         jdbcTemplate.update("UPDATE booking SET booking_state = 'CANCELLED' WHERE booking_id = ?",
@@ -193,7 +204,7 @@ public class BookingDaoImpl implements BookingDao {
     }
 
     private List<Passenger> loadPassengers(BigInteger bookingId) {
-        String sql = "SELECT * FROM passenger WHERE booking_id = ? AND passenger_state = 'ACTIVE'";
+        String sql = "SELECT * FROM passenger WHERE booking_id = ?";
         return jdbcTemplate.query(sql, PASSENGER_ROW_MAPPER, bookingId.longValue());
     }
 
@@ -215,6 +226,7 @@ public class BookingDaoImpl implements BookingDao {
             booking.setBookingDate(rs.getDate("booking_date").toLocalDate());
             booking.setTicketCost(rs.getBigDecimal("ticket_cost"));
             booking.setNoOfPassengers(rs.getInt("passenger_count"));
+            booking.setBookingState(rs.getString("booking_state"));
 
             // Hydrate nested User
             BigInteger userId = BigInteger.valueOf(rs.getLong("user_id"));
