@@ -9,16 +9,16 @@
  */
 export default function PassengerFormRow({ index, passenger, onChange, onRemove, errors = {} }) {
   return (
-    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+    <div className="rounded-lg p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-slate-700">
+        <h3 className="text-sm font-semibold text-white">
           Passenger {index + 1}
         </h3>
         {onRemove && (
           <button
             type="button"
             onClick={() => onRemove(index)}
-            className="text-xs text-red-500 hover:text-red-700 bg-transparent border-none cursor-pointer"
+            className="text-xs text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer transition-colors"
           >
             Remove
           </button>
@@ -28,7 +28,7 @@ export default function PassengerFormRow({ index, passenger, onChange, onRemove,
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Name */}
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: '#94A3B8' }}>
             Full Name
           </label>
           <input
@@ -36,16 +36,16 @@ export default function PassengerFormRow({ index, passenger, onChange, onRemove,
             value={passenger.passengerName}
             onChange={(e) => onChange(index, 'passengerName', e.target.value)}
             placeholder="Enter full name"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            className="glass-input w-full px-3 py-2 text-sm"
           />
           {errors.passengerName && (
-            <p className="text-xs text-red-500 mt-1">{errors.passengerName}</p>
+            <p className="text-xs text-red-400 mt-1">{errors.passengerName}</p>
           )}
         </div>
 
         {/* Age */}
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: '#94A3B8' }}>
             Age
           </label>
           <input
@@ -54,16 +54,16 @@ export default function PassengerFormRow({ index, passenger, onChange, onRemove,
             onChange={(e) => onChange(index, 'passengerAge', e.target.value)}
             placeholder="Age"
             min="1"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            className="glass-input w-full px-3 py-2 text-sm"
           />
           {errors.passengerAge && (
-            <p className="text-xs text-red-500 mt-1">{errors.passengerAge}</p>
+            <p className="text-xs text-red-400 mt-1">{errors.passengerAge}</p>
           )}
         </div>
 
         {/* UIN (Aadhaar-style 12 digits) */}
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: '#94A3B8' }}>
             UIN (12-digit ID)
           </label>
           <input
@@ -72,16 +72,16 @@ export default function PassengerFormRow({ index, passenger, onChange, onRemove,
             onChange={(e) => onChange(index, 'passengerUIN', e.target.value)}
             placeholder="123456789012"
             maxLength={12}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            className="glass-input w-full px-3 py-2 text-sm"
           />
           {errors.passengerUIN && (
-            <p className="text-xs text-red-500 mt-1">{errors.passengerUIN}</p>
+            <p className="text-xs text-red-400 mt-1">{errors.passengerUIN}</p>
           )}
         </div>
 
         {/* Luggage */}
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label className="block text-xs font-medium mb-1" style={{ color: '#94A3B8' }}>
             Luggage (kg)
           </label>
           <input
@@ -91,7 +91,7 @@ export default function PassengerFormRow({ index, passenger, onChange, onRemove,
             placeholder="0"
             min="0"
             step="0.5"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            className="glass-input w-full px-3 py-2 text-sm"
           />
         </div>
       </div>

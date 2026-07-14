@@ -5,6 +5,8 @@ import { getAllAirports } from '../../api/airports';
 import { searchFlights } from '../../api/scheduledFlights';
 import FlightCard from '../../components/FlightCard';
 import BorderGlowCard from '../../components/ui/BorderGlowCard';
+import { format } from 'date-fns';
+import { DatePicker } from '../../components/ui/date-picker';
 import { Plane, Globe, Clock, ShieldCheck } from 'lucide-react';
 
 /**
@@ -59,7 +61,8 @@ export default function LandingPage() {
 
     setSearching(true);
     try {
-      const data = await searchFlights(source, destination, date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const data = await searchFlights(source, destination, formattedDate);
       setResults(data);
     } catch (err) {
       setError(err.message || 'Search failed. Please try again.');
@@ -89,16 +92,7 @@ export default function LandingPage() {
     <div className="pb-16">
       {/* ═══ Hero Section ═══ */}
       <section className="relative px-4 pt-12 pb-20 overflow-hidden">
-        {/* Background glow orb */}
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at center, rgba(0, 89, 255, 0.12) 0%, transparent 70%)',
-            filter: 'blur(60px)',
-          }}
-        />
-
-        <div className="relative max-w-5xl mx-auto text-center">
+        <div className="relative z-10 max-w-5xl mx-auto text-center">
           {/* Eyebrow */}
           <p
             className="text-xs font-medium tracking-[0.25em] mb-6 animate-float-up"
@@ -215,13 +209,10 @@ export default function LandingPage() {
                 <label htmlFor="date" className="block text-sm font-medium mb-2" style={{ color: '#94A3B8' }}>
                   Date
                 </label>
-                <input
-                  id="date"
-                  type="date"
-                  value={date}
-                  min={today}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="glass-input w-full px-4 py-3 text-sm"
+                <DatePicker
+                  date={date}
+                  setDate={setDate}
+                  placeholder="Select travel date"
                 />
               </div>
 

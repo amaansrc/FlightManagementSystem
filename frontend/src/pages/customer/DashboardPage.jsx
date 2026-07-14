@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { Search, ClipboardList } from 'lucide-react';
+import BorderGlowCard from '../../components/ui/BorderGlowCard';
 
 /**
  * Customer dashboard — hub page with navigation cards.
@@ -11,13 +13,13 @@ export default function DashboardPage() {
     {
       title: 'Search Flights',
       description: 'Find and book available flights across India.',
-      icon: '🔍',
+      icon: <Search className="w-8 h-8" />,
       to: '/flights/search',
     },
     {
       title: 'My Bookings',
       description: 'View, manage, or cancel your existing bookings.',
-      icon: '📋',
+      icon: <ClipboardList className="w-8 h-8" />,
       to: '/bookings',
     },
   ];
@@ -26,10 +28,10 @@ export default function DashboardPage() {
     <div className="px-4 py-8 max-w-3xl mx-auto">
       {/* Welcome */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">
+        <h1 className="text-2xl font-bold text-white">
           Welcome, {user?.userName}!
         </h1>
-        <p className="text-slate-500 mt-1">What would you like to do today?</p>
+        <p className="mt-1" style={{ color: '#94A3B8' }}>What would you like to do today?</p>
       </div>
 
       {/* Navigation cards */}
@@ -38,13 +40,15 @@ export default function DashboardPage() {
           <Link
             key={card.to}
             to={card.to}
-            className="bg-white rounded-xl border border-slate-200 p-6 hover:border-primary-light hover:shadow-sm transition-all no-underline group"
+            className="block no-underline group h-full"
           >
-            <div className="text-3xl mb-3">{card.icon}</div>
-            <h2 className="text-lg font-semibold text-slate-800 group-hover:text-primary">
-              {card.title}
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">{card.description}</p>
+            <BorderGlowCard className="h-full p-6 transition-all group-hover:scale-[1.02]">
+              <div className="mb-3 text-[#94A3B8] group-hover:text-[#3B82F6] transition-colors">{card.icon}</div>
+              <h2 className="text-lg font-semibold text-white group-hover:text-[#3B82F6] transition-colors">
+                {card.title}
+              </h2>
+              <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>{card.description}</p>
+            </BorderGlowCard>
           </Link>
         ))}
       </div>

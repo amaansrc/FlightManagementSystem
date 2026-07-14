@@ -50,7 +50,7 @@ export default function AirportSelect({
   return (
     <div>
       {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
           {label}
         </label>
       )}
@@ -59,7 +59,7 @@ export default function AirportSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={loading}
-        className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+        className="glass-select w-full px-3 py-2.5 text-sm"
       >
         <option value="">{loading ? 'Loading…' : placeholder}</option>
         {filtered.map((a) => (

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { getAllAirports } from '../../api/airports';
 import { searchFlights } from '../../api/scheduledFlights';
 import FlightCard from '../../components/FlightCard';
+import { format } from 'date-fns';
+import { DatePicker } from '../../components/ui/date-picker';
 
 /**
  * Search flights page — customer search with results.
@@ -52,7 +54,8 @@ export default function SearchFlightsPage() {
 
     setSearching(true);
     try {
-      const data = await searchFlights(source, destination, date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const data = await searchFlights(source, destination, formattedDate);
       setResults(data);
     } catch (err) {
       setError(err.message || 'Search failed. Please try again.');
@@ -69,19 +72,26 @@ export default function SearchFlightsPage() {
 
   return (
     <div className="px-4 py-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Search Flights</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Search Flights</h1>
 
       {/* Search form */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
+      <div className="glass-card p-6 mb-8">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          <div
+            className="mb-4 p-3 rounded-xl text-sm"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              color: '#fca5a5',
+            }}
+          >
             {error}
           </div>
         )}
 
         <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label htmlFor="source" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="source" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               From
             </label>
             <select
@@ -89,7 +99,7 @@ export default function SearchFlightsPage() {
               value={source}
               onChange={(e) => setSource(e.target.value)}
               disabled={airportsLoading}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              className="glass-select w-full px-3 py-2.5 text-sm"
             >
               <option value="">Select origin</option>
               {airports.map((a) => (
@@ -101,7 +111,7 @@ export default function SearchFlightsPage() {
           </div>
 
           <div>
-            <label htmlFor="destination" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="destination" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               To
             </label>
             <select
@@ -109,7 +119,7 @@ export default function SearchFlightsPage() {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               disabled={airportsLoading}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              className="glass-select w-full px-3 py-2.5 text-sm"
             >
               <option value="">Select destination</option>
               {airports.map((a) => (
@@ -121,16 +131,13 @@ export default function SearchFlightsPage() {
           </div>
 
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Date
             </label>
-            <input
-              id="date"
-              type="date"
-              value={date}
-              min={today}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            <DatePicker
+              date={date}
+              setDate={setDate}
+              placeholder="Select travel date"
             />
           </div>
 
@@ -138,7 +145,7 @@ export default function SearchFlightsPage() {
             <button
               type="submit"
               disabled={searching || airportsLoading}
-              className="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              className="btn-accent w-full py-2.5 text-sm"
             >
               {searching ? 'Searching…' : 'Search'}
             </button>
@@ -148,15 +155,15 @@ export default function SearchFlightsPage() {
 
       {/* Results */}
       {results !== null && results.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
-          <p className="text-slate-500 text-lg">No flights found for this route and date.</p>
-          <p className="text-slate-400 text-sm mt-1">Try a different date or route.</p>
+        <div className="text-center py-12 glass-card">
+          <p className="text-lg text-white">No flights found for this route and date.</p>
+          <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>Try a different date or route.</p>
         </div>
       )}
 
       {results && results.length > 0 && (
         <div className="space-y-4">
-          <p className="text-sm text-slate-500 mb-2">
+          <p className="text-sm mb-2" style={{ color: '#94A3B8' }}>
             {results.length} flight{results.length > 1 ? 's' : ''} found
           </p>
           {results.map((sf) => (

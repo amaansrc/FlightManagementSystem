@@ -38,7 +38,31 @@
   }
 }
 
-/* Only show the toggle button below md breakpoint — desktop uses the NavBar toggle */
+/* Position the toggle button to sit perfectly inside the NavBar */
 .flightbook-side-menu .staggered-menu-header {
-  display: none;
+  position: fixed;
+  top: 19px;
+  right: 16px;
+  left: auto;
+  width: auto;
+  height: 48px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* Make it a little higher on admin/customer pages */
+.flightbook-side-menu.shifted-menu .staggered-menu-header {
+  top: 15px;
+}
+
+.flightbook-side-menu .staggered-menu-header>* {
+  pointer-events: auto;
+}
+
+/* Ensure SideMenu wrapper sits above NavBar (z-50) */
+.flightbook-side-menu.fixed-wrapper {
+  z-index: 60;
 }

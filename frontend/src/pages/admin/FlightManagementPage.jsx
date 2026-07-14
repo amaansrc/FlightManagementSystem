@@ -21,18 +21,18 @@ export default function FlightManagementPage() {
 
   return (
     <div className="px-4 py-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Flight Management</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Flight Management</h1>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1">
+      <div className="flex gap-1 mb-6 rounded-lg p-1" style={{ background: 'rgba(255,255,255,0.05)' }}>
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-md text-sm font-medium cursor-pointer border-none transition-colors ${
+            className={`flex-1 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
               activeTab === tab
-                ? 'bg-white text-primary shadow-sm'
-                : 'bg-transparent text-slate-500 hover:text-slate-700'
+                ? 'bg-[#0059FF] text-white shadow-sm border-transparent'
+                : 'bg-transparent text-white hover:bg-white/5 border-transparent'
             }`}
           >
             {tab}
@@ -87,8 +87,8 @@ function AddTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Add New Flight</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Add New Flight</h2>
 
       {error && <Alert type="error" message={error} />}
       {success && <Alert type="success" message={success} />}
@@ -120,7 +120,7 @@ function AddTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="btn-accent px-6 py-2.5 text-sm"
         >
           {submitting ? 'Adding…' : 'Add Flight'}
         </button>
@@ -161,39 +161,39 @@ function ViewAllTab() {
     }
   };
 
-  if (loading) return <p className="text-slate-500 text-center py-8">Loading flights…</p>;
+  if (loading) return <p className="text-center py-8" style={{ color: '#94A3B8' }}>Loading flights…</p>;
 
   return (
     <div>
       {error && <Alert type="error" message={error} />}
 
       {flights.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
-          <p className="text-slate-500">No flights found.</p>
+        <div className="text-center py-12 glass-card">
+          <p className="text-white">No flights found.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="glass-card overflow-hidden">
+          <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="text-left px-4 py-3 font-medium text-slate-600">#</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Model</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Carrier</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">Seats</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>
+              <tr style={{ background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <th className="px-4 py-3 font-medium text-white">#</th>
+                <th className="px-4 py-3 font-medium text-white">Model</th>
+                <th className="px-4 py-3 font-medium text-white">Carrier</th>
+                <th className="px-4 py-3 font-medium text-white">Seats</th>
+                <th className="text-right px-4 py-3 font-medium text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
               {flights.map((f) => (
-                <tr key={f.flightNumber} className="border-b border-slate-100 last:border-b-0">
-                  <td className="px-4 py-3 font-mono text-slate-800">{f.flightNumber}</td>
-                  <td className="px-4 py-3 text-slate-800">{f.flightModel}</td>
-                  <td className="px-4 py-3 text-slate-800">{f.carrierName}</td>
-                  <td className="px-4 py-3 text-slate-800">{f.seatCapacity}</td>
+                <tr key={f.flightNumber} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <td className="px-4 py-3 font-mono text-white">{f.flightNumber}</td>
+                  <td className="px-4 py-3 text-white">{f.flightModel}</td>
+                  <td className="px-4 py-3 text-white">{f.carrierName}</td>
+                  <td className="px-4 py-3 text-white">{f.seatCapacity}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => handleDelete(f.flightNumber)}
-                      className="text-xs text-red-500 hover:text-red-700 bg-transparent border-none cursor-pointer"
+                      className="text-xs text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer transition-colors"
                     >
                       Delete
                     </button>
@@ -237,8 +237,8 @@ function SearchTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Search by Flight Number</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Search by Flight Number</h2>
 
       {error && <Alert type="error" message={error} />}
 
@@ -248,35 +248,35 @@ function SearchTab() {
           value={flightNumber}
           onChange={(e) => setFlightNumber(e.target.value)}
           placeholder="Enter flight number"
-          className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+          className="glass-input flex-1 px-4 py-2.5 text-sm"
         />
         <button
           type="submit"
           disabled={searching}
-          className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="btn-accent px-6 py-2.5 text-sm"
         >
           {searching ? 'Searching…' : 'Search'}
         </button>
       </form>
 
       {result && (
-        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+        <div className="rounded-lg p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <span className="text-slate-400">Flight Number</span>
-              <p className="text-slate-800 font-medium font-mono">{result.flightNumber}</p>
+              <span style={{ color: '#94A3B8' }}>Flight Number</span>
+              <p className="text-white font-medium font-mono">{result.flightNumber}</p>
             </div>
             <div>
-              <span className="text-slate-400">Model</span>
-              <p className="text-slate-800 font-medium">{result.flightModel}</p>
+              <span style={{ color: '#94A3B8' }}>Model</span>
+              <p className="text-white font-medium">{result.flightModel}</p>
             </div>
             <div>
-              <span className="text-slate-400">Carrier</span>
-              <p className="text-slate-800 font-medium">{result.carrierName}</p>
+              <span style={{ color: '#94A3B8' }}>Carrier</span>
+              <p className="text-white font-medium">{result.carrierName}</p>
             </div>
             <div>
-              <span className="text-slate-400">Seat Capacity</span>
-              <p className="text-slate-800 font-medium">{result.seatCapacity}</p>
+              <span style={{ color: '#94A3B8' }}>Seat Capacity</span>
+              <p className="text-white font-medium">{result.seatCapacity}</p>
             </div>
           </div>
         </div>
@@ -348,8 +348,8 @@ function UpdateTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Update Flight</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Update Flight</h2>
 
       {error && <Alert type="error" message={error} />}
       {success && <Alert type="success" message={success} />}
@@ -361,12 +361,12 @@ function UpdateTab() {
           value={flightNumber}
           onChange={(e) => setFlightNumber(e.target.value)}
           placeholder="Enter flight number to load"
-          className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+          className="glass-input flex-1 px-4 py-2.5 text-sm"
         />
         <button
           type="submit"
           disabled={loadingFlight}
-          className="bg-slate-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="glass-card px-6 py-2.5 text-sm font-medium text-white hover:bg-white/5 cursor-pointer"
         >
           {loadingFlight ? 'Loading…' : 'Load'}
         </button>
@@ -374,9 +374,9 @@ function UpdateTab() {
 
       {/* Step 2: Edit form */}
       {form && (
-        <form onSubmit={handleUpdate} className="space-y-4 border-t border-slate-200 pt-4">
-          <p className="text-xs text-slate-400">
-            Editing flight <span className="font-mono font-bold">#{form.flightNumber}</span>
+        <form onSubmit={handleUpdate} className="space-y-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <p className="text-xs" style={{ color: '#94A3B8' }}>
+            Editing flight <span className="font-mono font-bold text-white">#{form.flightNumber}</span>
           </p>
           <FormField
             label="Flight Model"
@@ -401,7 +401,7 @@ function UpdateTab() {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="btn-accent px-6 py-2.5 text-sm"
           >
             {submitting ? 'Updating…' : 'Update Flight'}
           </button>
@@ -416,7 +416,7 @@ function UpdateTab() {
 function FormField({ label, id, type = 'text', value, onChange, placeholder, min }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
         {label}
       </label>
       <input
@@ -426,19 +426,23 @@ function FormField({ label, id, type = 'text', value, onChange, placeholder, min
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         min={min}
-        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+        className="glass-input w-full px-4 py-2.5 text-sm"
       />
     </div>
   );
 }
 
 function Alert({ type, message }) {
-  const styles =
-    type === 'error'
-      ? 'bg-red-50 border-red-200 text-red-600'
-      : 'bg-green-50 border-green-200 text-green-600';
+  const isError = type === 'error';
   return (
-    <div className={`mb-4 p-3 border rounded-lg text-sm ${styles}`}>
+    <div
+      className="mb-4 p-3 rounded-lg text-sm"
+      style={{
+        background: isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+        border: `1px solid ${isError ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
+        color: isError ? '#fca5a5' : '#6ee7b7'
+      }}
+    >
       {message}
     </div>
   );

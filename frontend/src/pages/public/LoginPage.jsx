@@ -47,7 +47,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8 animate-float-up" style={{ animationDelay: '0.1s' }}>
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: 'rgba(0, 89, 255, 0.15)' }}>
-            <Plane className="w-7 h-7" style={{ color: '#3B82F6' }} />
+            <img src="/airplane-logo.svg" alt="FlightBook Logo" className="w-7 h-7" />
           </div>
           <h1 className="text-3xl font-semibold text-white">Welcome Back</h1>
           <p className="mt-2" style={{ color: '#94A3B8' }}>Sign in to your FlightBook account</p>

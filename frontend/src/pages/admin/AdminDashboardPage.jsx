@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { Plane, CalendarDays } from 'lucide-react';
+import BorderGlowCard from '../../components/ui/BorderGlowCard';
 
 /**
  * Admin dashboard — hub page with navigation cards.
@@ -11,13 +13,13 @@ export default function AdminDashboardPage() {
     {
       title: 'Manage Flights',
       description: 'Add, view, search, update, or delete aircraft from the fleet.',
-      icon: '✈️',
+      icon: <Plane className="w-8 h-8" />,
       to: '/admin/flights',
     },
     {
       title: 'Manage Scheduled Flights',
       description: 'Schedule flights, set routes, timings, and ticket pricing.',
-      icon: '📅',
+      icon: <CalendarDays className="w-8 h-8" />,
       to: '/admin/scheduled-flights',
     },
   ];
@@ -26,11 +28,11 @@ export default function AdminDashboardPage() {
     <div className="px-4 py-8 max-w-3xl mx-auto">
       {/* Welcome */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">
+        <h1 className="text-2xl font-bold text-white">
           Welcome, Admin!
         </h1>
-        <p className="text-slate-500 mt-1">
-          Logged in as <span className="font-medium text-slate-700">{user?.userName}</span>
+        <p className="mt-1" style={{ color: '#94A3B8' }}>
+          Logged in as <span className="font-medium text-white">{user?.userName}</span>
         </p>
       </div>
 
@@ -40,13 +42,15 @@ export default function AdminDashboardPage() {
           <Link
             key={card.to}
             to={card.to}
-            className="bg-white rounded-xl border border-slate-200 p-6 hover:border-primary-light hover:shadow-sm transition-all no-underline group"
+            className="block no-underline group h-full"
           >
-            <div className="text-3xl mb-3">{card.icon}</div>
-            <h2 className="text-lg font-semibold text-slate-800 group-hover:text-primary">
-              {card.title}
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">{card.description}</p>
+            <BorderGlowCard className="h-full p-6 transition-all group-hover:scale-[1.02]">
+              <div className="mb-3 text-[#94A3B8] group-hover:text-[#3B82F6] transition-colors">{card.icon}</div>
+              <h2 className="text-lg font-semibold text-white group-hover:text-[#3B82F6] transition-colors">
+                {card.title}
+              </h2>
+              <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>{card.description}</p>
+            </BorderGlowCard>
           </Link>
         ))}
       </div>

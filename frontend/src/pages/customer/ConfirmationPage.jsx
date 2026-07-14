@@ -35,7 +35,7 @@ export default function ConfirmationPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-slate-500">Loading booking details…</p>
+        <p style={{ color: '#94A3B8' }}>Loading booking details…</p>
       </div>
     );
   }
@@ -43,10 +43,11 @@ export default function ConfirmationPage() {
   if (error || !booking) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] flex-col">
-        <p className="text-red-500">{error || 'Booking not found.'}</p>
+        <p className="text-red-400">{error || 'Booking not found.'}</p>
         <button
           onClick={() => navigate('/bookings')}
-          className="mt-4 text-sm text-primary hover:underline bg-transparent border-none cursor-pointer"
+          className="mt-4 text-sm hover:underline bg-transparent border-none cursor-pointer"
+          style={{ color: '#3B82F6' }}
         >
           Go to My Bookings
         </button>
@@ -59,43 +60,49 @@ export default function ConfirmationPage() {
   return (
     <div className="px-4 py-8 max-w-3xl mx-auto">
       {/* Success banner */}
-      <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6 text-center">
+      <div
+        className="rounded-xl p-6 mb-6 text-center"
+        style={{
+          background: 'rgba(16, 185, 129, 0.1)',
+          border: '1px solid rgba(16, 185, 129, 0.2)',
+        }}
+      >
         <div className="text-3xl mb-2">✅</div>
-        <h1 className="text-xl font-bold text-green-800">Booking Confirmed!</h1>
-        <p className="text-sm text-green-600 mt-1">
-          Your booking ID is <span className="font-mono font-bold">{booking.bookingId}</span>
+        <h1 className="text-xl font-bold text-green-400">Booking Confirmed!</h1>
+        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+          Your booking ID is <span className="font-mono font-bold text-white">{booking.bookingId}</span>
         </p>
       </div>
 
       {/* Flight details */}
       {scheduledFlight && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+        <div className="glass-card p-5 mb-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>
             Flight Details
           </h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <span className="text-slate-400">Carrier</span>
-              <p className="text-slate-800 font-medium">
+              <span style={{ color: '#64748b' }}>Carrier</span>
+              <p className="text-white font-medium">
                 {scheduledFlight.flight?.carrierName || '—'}
               </p>
             </div>
             <div>
-              <span className="text-slate-400">Model</span>
-              <p className="text-slate-800 font-medium">
+              <span style={{ color: '#64748b' }}>Model</span>
+              <p className="text-white font-medium">
                 {scheduledFlight.flight?.flightModel || '—'}
               </p>
             </div>
             <div>
-              <span className="text-slate-400">Route</span>
-              <p className="text-slate-800 font-medium">
+              <span style={{ color: '#64748b' }}>Route</span>
+              <p className="text-white font-medium">
                 {scheduledFlight.schedule?.sourceAirport?.airportCode || '—'} →{' '}
                 {scheduledFlight.schedule?.destinationAirport?.airportCode || '—'}
               </p>
             </div>
             <div>
-              <span className="text-slate-400">Date</span>
-              <p className="text-slate-800 font-medium">{booking.bookingDate}</p>
+              <span style={{ color: '#64748b' }}>Date</span>
+              <p className="text-white font-medium">{booking.bookingDate}</p>
             </div>
           </div>
         </div>
@@ -103,23 +110,24 @@ export default function ConfirmationPage() {
 
       {/* Passenger PNR list */}
       {passengerList && passengerList.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+        <div className="glass-card p-5 mb-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>
             Passengers & PNR
           </h2>
           <div className="space-y-3">
             {passengerList.map((p, i) => (
               <div
                 key={p.pnrNumber || i}
-                className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3"
+                className="flex items-center justify-between rounded-lg px-4 py-3"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{p.passengerName}</p>
-                  <p className="text-xs text-slate-400">Age: {p.passengerAge}</p>
+                  <p className="text-sm font-medium text-white">{p.passengerName}</p>
+                  <p className="text-xs" style={{ color: '#94A3B8' }}>Age: {p.passengerAge}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-slate-400">PNR</p>
-                  <p className="text-sm font-mono font-bold text-primary">{p.pnrNumber || '—'}</p>
+                  <p className="text-xs" style={{ color: '#94A3B8' }}>PNR</p>
+                  <p className="text-sm font-mono font-bold" style={{ color: '#3B82F6' }}>{p.pnrNumber || '—'}</p>
                 </div>
               </div>
             ))}
@@ -128,10 +136,10 @@ export default function ConfirmationPage() {
       )}
 
       {/* Cost */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 mb-6">
+      <div className="glass-card p-5 mb-6">
         <div className="flex justify-between text-sm">
-          <span className="text-slate-500">Total Cost</span>
-          <span className="text-lg font-bold text-slate-800">
+          <span style={{ color: '#94A3B8' }}>Total Cost</span>
+          <span className="text-lg font-bold text-white">
             ₹{booking.ticketCost?.toLocaleString('en-IN') || '—'}
           </span>
         </div>
@@ -141,13 +149,13 @@ export default function ConfirmationPage() {
       <div className="flex gap-3">
         <button
           onClick={() => navigate('/bookings')}
-          className="flex-1 bg-primary text-white py-3 rounded-lg text-sm font-medium hover:bg-primary-dark cursor-pointer"
+          className="flex-1 btn-accent py-3 text-sm"
         >
           Go to My Bookings
         </button>
         <button
           onClick={() => navigate('/flights/search')}
-          className="flex-1 bg-white text-slate-700 py-3 rounded-lg text-sm font-medium border border-slate-300 hover:bg-slate-50 cursor-pointer"
+          className="flex-1 glass-card py-3 text-sm font-medium text-white hover:bg-white/5 cursor-pointer"
         >
           Book Another Flight
         </button>

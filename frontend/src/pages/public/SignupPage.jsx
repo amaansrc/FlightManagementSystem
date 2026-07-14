@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 
+import { Plane } from 'lucide-react';
+
 /**
  * Signup page — customer registration form.
  * Fields: username, email, phone, password, confirm password.
@@ -93,15 +95,25 @@ export default function SignupPage() {
     <div className="flex items-center justify-center min-h-[70vh] px-4 py-8">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-slate-800">Create Account</h1>
-          <p className="text-slate-500 mt-1">Sign up to start booking flights</p>
+        <div className="text-center mb-8 animate-float-up" style={{ animationDelay: '0.1s' }}>
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: 'rgba(0, 89, 255, 0.15)' }}>
+            <img src="/airplane-logo.svg" alt="FlightBook Logo" className="w-7 h-7" />
+          </div>
+          <h1 className="text-3xl font-semibold text-white">Create Account</h1>
+          <p className="mt-2" style={{ color: '#94A3B8' }}>Sign up to start booking flights</p>
         </div>
 
         {/* Form card */}
-        <div className="bg-white rounded-xl border border-slate-200 p-8">
+        <div className="glass-card p-8 animate-float-up" style={{ animationDelay: '0.2s' }}>
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div
+              className="mb-4 p-3 rounded-xl text-sm"
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                color: '#fca5a5',
+              }}
+            >
               {error}
             </div>
           )}
@@ -109,7 +121,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div>
-              <label htmlFor="userName" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userName" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Username
               </label>
               <input
@@ -118,16 +130,16 @@ export default function SignupPage() {
                 value={form.userName}
                 onChange={(e) => updateField('userName', e.target.value)}
                 placeholder="Choose a username"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
               {fieldErrors.userName && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.userName}</p>
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.userName}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="userEmail" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userEmail" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Email
               </label>
               <input
@@ -136,16 +148,16 @@ export default function SignupPage() {
                 value={form.userEmail}
                 onChange={(e) => updateField('userEmail', e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
               {fieldErrors.userEmail && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.userEmail}</p>
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.userEmail}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label htmlFor="userPhone" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userPhone" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Phone Number
               </label>
               <input
@@ -154,16 +166,16 @@ export default function SignupPage() {
                 value={form.userPhone}
                 onChange={(e) => updateField('userPhone', e.target.value)}
                 placeholder="10-digit phone number"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
               {fieldErrors.userPhone && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.userPhone}</p>
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.userPhone}</p>
               )}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="userPassword" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userPassword" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Password
               </label>
               <input
@@ -172,16 +184,16 @@ export default function SignupPage() {
                 value={form.userPassword}
                 onChange={(e) => updateField('userPassword', e.target.value)}
                 placeholder="Create a password"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
               {fieldErrors.userPassword && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.userPassword}</p>
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.userPassword}</p>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Confirm Password
               </label>
               <input
@@ -190,10 +202,10 @@ export default function SignupPage() {
                 value={form.confirmPassword}
                 onChange={(e) => updateField('confirmPassword', e.target.value)}
                 placeholder="Re-enter your password"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
               {fieldErrors.confirmPassword && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.confirmPassword}</p>
               )}
             </div>
 
@@ -201,16 +213,16 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed mt-2"
+              className="btn-accent w-full py-3 text-sm mt-4"
             >
               {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>
 
           {/* Login link */}
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm mt-6" style={{ color: '#94A3B8' }}>
             Already have an account?{' '}
-            <Link to="/login" className="text-primary font-medium hover:underline">
+            <Link to="/login" className="font-medium hover:underline transition-colors" style={{ color: '#3B82F6' }}>
               Sign in
             </Link>
           </p>

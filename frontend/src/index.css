@@ -72,7 +72,7 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   background-color: var(--color-novapay-bg);
   color: var(--color-novapay-text);
   margin: 0;
@@ -209,4 +209,56 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── React Day Picker v10 Theme Overrides ── */
+.rdp-root {
+  --rdp-accent-color: var(--color-novapay-accent);
+  --rdp-accent-background-color: rgba(0, 89, 255, 0.1);
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-day_button-height: 36px;
+  --rdp-day_button-width: 36px;
+  --rdp-day_button-border-radius: 8px;
+  --rdp-selected-border: 1px solid var(--color-novapay-accent);
+  --rdp-today-color: var(--color-novapay-text);
+  color: var(--color-novapay-text);
+  --rdp-weekday-opacity: 0.6;
+}
+
+.rdp-day_button:hover:not([disabled]):not(.rdp-selected) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.rdp-selected .rdp-day_button {
+  background-color: var(--color-novapay-accent);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.rdp-today .rdp-day_button {
+  background-color: rgba(255, 255, 255, 0.05);
+  font-weight: bold;
+}
+
+.rdp-caption_label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Fix table display in case Tailwind overrides it */
+.rdp-month_grid {
+  display: table !important;
+  width: 100%;
+}
+.rdp-month_grid tbody {
+  display: table-row-group !important;
+}
+.rdp-month_grid tr {
+  display: table-row !important;
+}
+.rdp-month_grid td, .rdp-month_grid th {
+  display: table-cell !important;
 }

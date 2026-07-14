@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import StaggeredMenu from './StaggeredMenu';
 import './SideMenu.css';
@@ -10,6 +10,7 @@ import './SideMenu.css';
 export default function SideMenu({ visible = true }) {
   const { isAuthenticated, isAdmin, isCustomer } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Build items based on auth state — same source of truth as NavBar
   const items = [];
@@ -49,7 +50,7 @@ export default function SideMenu({ visible = true }) {
       accentColor="#3B82F6"
       isFixed={true}
       closeOnClickAway={true}
-      className="flightbook-side-menu"
+      className={`flightbook-side-menu ${isAuthenticated ? 'shifted-menu' : ''}`}
     />
   );
 }

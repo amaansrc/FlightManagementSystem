@@ -9,6 +9,8 @@ import {
 } from '../../api/scheduledFlights';
 import { getAllFlights } from '../../api/flights';
 import AirportSelect from '../../components/AirportSelect';
+import { format, parseISO } from 'date-fns';
+import { DatePicker, DateTimePicker } from '../../components/ui/date-picker';
 
 const TABS = ['Add', 'View All', 'Search', 'Update'];
 
@@ -21,18 +23,18 @@ export default function ScheduledFlightManagementPage() {
 
   return (
     <div className="px-4 py-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Scheduled Flight Management</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Scheduled Flight Management</h1>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1">
+      <div className="flex gap-1 mb-6 rounded-lg p-1" style={{ background: 'rgba(255,255,255,0.05)' }}>
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-md text-sm font-medium cursor-pointer border-none transition-colors ${
+            className={`flex-1 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
               activeTab === tab
-                ? 'bg-white text-primary shadow-sm'
-                : 'bg-transparent text-slate-500 hover:text-slate-700'
+                ? 'bg-[#0059FF] text-white shadow-sm border-transparent'
+                : 'bg-transparent text-white hover:bg-white/5 border-transparent'
             }`}
           >
             {tab}
@@ -103,7 +105,7 @@ function AddTab() {
       setError('Source and destination must be different.');
       return;
     }
-    if (new Date(form.arrivalTime) <= new Date(form.departureTime)) {
+    if (form.arrivalTime <= form.departureTime) {
       setError('Arrival time must be after departure time.');
       return;
     }
@@ -115,8 +117,8 @@ function AddTab() {
         schedule: {
           sourceAirport: { airportCode: form.sourceAirport },
           destinationAirport: { airportCode: form.destinationAirport },
-          departureTime: form.departureTime,
-          arrivalTime: form.arrivalTime,
+          departureTime: format(form.departureTime, "yyyy-MM-dd'T'HH:mm"),
+          arrivalTime: format(form.arrivalTime, "yyyy-MM-dd'T'HH:mm"),
         },
         availableSeats: parseInt(form.availableSeats),
         ticketCost: parseFloat(form.ticketCost),
@@ -135,8 +137,8 @@ function AddTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Schedule a New Flight</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Schedule a New Flight</h2>
 
       {error && <Alert type="error" message={error} />}
       {success && <Alert type="success" message={success} />}
@@ -144,7 +146,7 @@ function AddTab() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Flight selection */}
         <div>
-          <label htmlFor="flightSelect" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="flightSelect" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
             Flight
           </label>
           <select
@@ -152,7 +154,7 @@ function AddTab() {
             value={form.flightNumber}
             onChange={(e) => handleFlightChange(e.target.value)}
             disabled={flightsLoading}
-            className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            className="glass-select w-full px-3 py-2.5 text-sm"
           >
             <option value="">{flightsLoading ? 'Loading…' : 'Select a flight'}</option>
             {flights.map((f) => (
@@ -184,27 +186,23 @@ function AddTab() {
         {/* Times */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="departureTime" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="departureTime" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Departure Time
             </label>
-            <input
-              id="departureTime"
-              type="datetime-local"
-              value={form.departureTime}
-              onChange={(e) => setForm((p) => ({ ...p, departureTime: e.target.value }))}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            <DateTimePicker
+              date={form.departureTime}
+              setDate={(d) => setForm((p) => ({ ...p, departureTime: d }))}
+              placeholder="Select departure"
             />
           </div>
           <div>
-            <label htmlFor="arrivalTime" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="arrivalTime" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Arrival Time
             </label>
-            <input
-              id="arrivalTime"
-              type="datetime-local"
-              value={form.arrivalTime}
-              onChange={(e) => setForm((p) => ({ ...p, arrivalTime: e.target.value }))}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+            <DateTimePicker
+              date={form.arrivalTime}
+              setDate={(d) => setForm((p) => ({ ...p, arrivalTime: d }))}
+              placeholder="Select arrival"
             />
           </div>
         </div>
@@ -212,7 +210,7 @@ function AddTab() {
         {/* Cost & Seats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="ticketCost" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="ticketCost" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Ticket Cost (₹)
             </label>
             <input
@@ -223,11 +221,11 @@ function AddTab() {
               placeholder="e.g. 4599"
               min="0"
               step="0.01"
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              className="glass-input w-full px-3 py-2.5 text-sm"
             />
           </div>
           <div>
-            <label htmlFor="availableSeats" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="availableSeats" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Available Seats
             </label>
             <input
@@ -237,7 +235,7 @@ function AddTab() {
               onChange={(e) => setForm((p) => ({ ...p, availableSeats: e.target.value }))}
               placeholder="Auto-filled from flight"
               min="1"
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              className="glass-input w-full px-3 py-2.5 text-sm"
             />
           </div>
         </div>
@@ -245,7 +243,7 @@ function AddTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="btn-accent px-6 py-2.5 text-sm"
         >
           {submitting ? 'Scheduling…' : 'Schedule Flight'}
         </button>
@@ -301,49 +299,50 @@ function ViewAllTab() {
       {error && <Alert type="error" message={error} />}
 
       {scheduledFlights.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
-          <p className="text-slate-500">No scheduled flights found.</p>
+        <div className="text-center py-12 glass-card">
+          <p className="text-white">No scheduled flights found.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {scheduledFlights.map((sf) => (
             <div
               key={sf.scheduledFlightId}
-              className="bg-white rounded-xl border border-slate-200 p-4"
+              className="rounded-xl p-4"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             >
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <span className="text-xs text-slate-400">ID: </span>
-                  <span className="text-sm font-mono font-bold text-slate-800">
+                  <span className="text-xs" style={{ color: '#94A3B8' }}>ID: </span>
+                  <span className="text-sm font-mono font-bold text-white">
                     {sf.scheduledFlightId}
                   </span>
-                  <span className="text-xs text-slate-400 ml-3">
+                  <span className="text-xs ml-3" style={{ color: '#94A3B8' }}>
                     Flight #{sf.flight?.flightNumber} · {sf.flight?.carrierName}
                   </span>
                 </div>
                 <button
                   onClick={() => handleDelete(sf.scheduledFlightId)}
-                  className="text-xs text-red-500 hover:text-red-700 bg-transparent border-none cursor-pointer"
+                  className="text-xs text-red-400 hover:text-red-300 bg-transparent border-none cursor-pointer transition-colors"
                 >
                   Delete
                 </button>
               </div>
 
               <div className="flex items-center gap-4 text-sm">
-                <span className="font-medium text-slate-800">
+                <span className="font-medium text-white">
                   {sf.schedule?.sourceAirport?.airportCode || '—'}
                 </span>
-                <span className="text-slate-300">→</span>
-                <span className="font-medium text-slate-800">
+                <span style={{ color: '#64748b' }}>→</span>
+                <span className="font-medium text-white">
                   {sf.schedule?.destinationAirport?.airportCode || '—'}
                 </span>
-                <span className="text-xs text-slate-400 ml-auto">
+                <span className="text-xs ml-auto" style={{ color: '#94A3B8' }}>
                   {formatDateTime(sf.schedule?.departureTime)} – {formatDateTime(sf.schedule?.arrivalTime)}
                 </span>
               </div>
 
-              <div className="flex gap-4 mt-2 text-xs text-slate-500">
-                <span>₹{sf.ticketCost?.toLocaleString('en-IN') || '—'}</span>
+              <div className="flex gap-4 mt-2 text-xs" style={{ color: '#94A3B8' }}>
+                <span className="text-white">₹{sf.ticketCost?.toLocaleString('en-IN') || '—'}</span>
                 <span>{sf.availableSeats} seats</span>
               </div>
             </div>
@@ -375,7 +374,8 @@ function SearchTab() {
 
     setSearching(true);
     try {
-      const data = await searchFlights(source, destination, date);
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const data = await searchFlights(source, destination, formattedDate);
       setResults(data);
     } catch (err) {
       setError(err.message || 'Search failed.');
@@ -391,8 +391,8 @@ function SearchTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Search by Route & Date</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Search by Route & Date</h2>
 
       {error && <Alert type="error" message={error} />}
 
@@ -412,22 +412,20 @@ function SearchTab() {
           exclude={source}
         />
         <div>
-          <label htmlFor="searchDate" className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="searchDate" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
             Date
           </label>
-          <input
-            id="searchDate"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+          <DatePicker
+            date={date}
+            setDate={setDate}
+            placeholder="Select travel date"
           />
         </div>
         <div className="flex items-end">
           <button
             type="submit"
             disabled={searching}
-            className="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="btn-accent w-full py-2.5 text-sm"
           >
             {searching ? 'Searching…' : 'Search'}
           </button>
@@ -435,27 +433,27 @@ function SearchTab() {
       </form>
 
       {results !== null && results.length === 0 && (
-        <p className="text-slate-500 text-center py-6">No scheduled flights found.</p>
+        <p className="text-center py-6" style={{ color: '#94A3B8' }}>No scheduled flights found.</p>
       )}
 
       {results && results.length > 0 && (
         <div className="space-y-3">
           {results.map((sf) => (
-            <div key={sf.scheduledFlightId} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <div key={sf.scheduledFlightId} className="rounded-lg p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-mono text-slate-800">#{sf.scheduledFlightId}</span>
-                <span className="text-slate-500">{sf.flight?.carrierName} · {sf.flight?.flightModel}</span>
+                <span className="font-mono text-white">#{sf.scheduledFlightId}</span>
+                <span style={{ color: '#94A3B8' }}>{sf.flight?.carrierName} · {sf.flight?.flightModel}</span>
               </div>
               <div className="flex items-center gap-3 mt-2 text-sm">
-                <span className="font-medium">{sf.schedule?.sourceAirport?.airportCode}</span>
-                <span className="text-slate-300">→</span>
-                <span className="font-medium">{sf.schedule?.destinationAirport?.airportCode}</span>
-                <span className="text-xs text-slate-400 ml-auto">
+                <span className="font-medium text-white">{sf.schedule?.sourceAirport?.airportCode}</span>
+                <span style={{ color: '#64748b' }}>→</span>
+                <span className="font-medium text-white">{sf.schedule?.destinationAirport?.airportCode}</span>
+                <span className="text-xs ml-auto" style={{ color: '#94A3B8' }}>
                   {formatTime(sf.schedule?.departureTime)} – {formatTime(sf.schedule?.arrivalTime)}
                 </span>
               </div>
-              <div className="flex gap-4 mt-2 text-xs text-slate-500">
-                <span>₹{sf.ticketCost?.toLocaleString('en-IN')}</span>
+              <div className="flex gap-4 mt-2 text-xs" style={{ color: '#94A3B8' }}>
+                <span className="text-white">₹{sf.ticketCost?.toLocaleString('en-IN')}</span>
                 <span>{sf.availableSeats} seats</span>
               </div>
             </div>
@@ -505,8 +503,8 @@ function UpdateTab() {
         flightNumber: String(data.flight?.flightNumber || ''),
         sourceAirport: data.schedule?.sourceAirport?.airportCode || '',
         destinationAirport: data.schedule?.destinationAirport?.airportCode || '',
-        departureTime: data.schedule?.departureTime?.slice(0, 16) || '',
-        arrivalTime: data.schedule?.arrivalTime?.slice(0, 16) || '',
+        departureTime: data.schedule?.departureTime ? parseISO(data.schedule.departureTime) : undefined,
+        arrivalTime: data.schedule?.arrivalTime ? parseISO(data.schedule.arrivalTime) : undefined,
         ticketCost: String(data.ticketCost || ''),
         availableSeats: String(data.availableSeats || ''),
       });
@@ -535,8 +533,8 @@ function UpdateTab() {
         schedule: {
           sourceAirport: { airportCode: form.sourceAirport },
           destinationAirport: { airportCode: form.destinationAirport },
-          departureTime: form.departureTime,
-          arrivalTime: form.arrivalTime,
+          departureTime: format(form.departureTime, "yyyy-MM-dd'T'HH:mm"),
+          arrivalTime: format(form.arrivalTime, "yyyy-MM-dd'T'HH:mm"),
         },
         availableSeats: parseInt(form.availableSeats),
         ticketCost: parseFloat(form.ticketCost),
@@ -550,8 +548,8 @@ function UpdateTab() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Update Scheduled Flight</h2>
+    <div className="glass-card p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Update Scheduled Flight</h2>
 
       {error && <Alert type="error" message={error} />}
       {success && <Alert type="success" message={success} />}
@@ -563,12 +561,12 @@ function UpdateTab() {
           value={scheduledFlightId}
           onChange={(e) => setScheduledFlightId(e.target.value)}
           placeholder="Enter scheduled flight ID"
-          className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+          className="glass-input flex-1 px-4 py-2.5 text-sm"
         />
         <button
           type="submit"
           disabled={loadingSF}
-          className="bg-slate-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="glass-card px-6 py-2.5 text-sm font-medium text-white hover:bg-white/5 cursor-pointer"
         >
           {loadingSF ? 'Loading…' : 'Load'}
         </button>
@@ -576,21 +574,21 @@ function UpdateTab() {
 
       {/* Edit form */}
       {form && (
-        <form onSubmit={handleUpdate} className="space-y-4 border-t border-slate-200 pt-4">
-          <p className="text-xs text-slate-400">
-            Editing scheduled flight <span className="font-mono font-bold">#{form.scheduledFlightId}</span>
+        <form onSubmit={handleUpdate} className="space-y-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <p className="text-xs" style={{ color: '#94A3B8' }}>
+            Editing scheduled flight <span className="font-mono font-bold text-white">#{form.scheduledFlightId}</span>
           </p>
 
           {/* Flight selection */}
           <div>
-            <label htmlFor="updateFlight" className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="updateFlight" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
               Flight
             </label>
             <select
               id="updateFlight"
               value={form.flightNumber}
               onChange={(e) => setForm((p) => ({ ...p, flightNumber: e.target.value }))}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              className="glass-select w-full px-3 py-2.5 text-sm"
             >
               <option value="">Select a flight</option>
               {flights.map((f) => (
@@ -622,27 +620,23 @@ function UpdateTab() {
           {/* Times */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="updateDep" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="updateDep" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Departure Time
               </label>
-              <input
-                id="updateDep"
-                type="datetime-local"
-                value={form.departureTime}
-                onChange={(e) => setForm((p) => ({ ...p, departureTime: e.target.value }))}
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              <DateTimePicker
+                date={form.departureTime}
+                setDate={(d) => setForm((p) => ({ ...p, departureTime: d }))}
+                placeholder="Select departure"
               />
             </div>
             <div>
-              <label htmlFor="updateArr" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="updateArr" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Arrival Time
               </label>
-              <input
-                id="updateArr"
-                type="datetime-local"
-                value={form.arrivalTime}
-                onChange={(e) => setForm((p) => ({ ...p, arrivalTime: e.target.value }))}
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+              <DateTimePicker
+                date={form.arrivalTime}
+                setDate={(d) => setForm((p) => ({ ...p, arrivalTime: d }))}
+                placeholder="Select arrival"
               />
             </div>
           </div>
@@ -650,7 +644,7 @@ function UpdateTab() {
           {/* Cost & Seats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="updateCost" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="updateCost" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Ticket Cost (₹)
               </label>
               <input
@@ -660,11 +654,11 @@ function UpdateTab() {
                 onChange={(e) => setForm((p) => ({ ...p, ticketCost: e.target.value }))}
                 min="0"
                 step="0.01"
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-3 py-2.5 text-sm"
               />
             </div>
             <div>
-              <label htmlFor="updateSeats" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="updateSeats" className="block text-sm font-medium mb-1" style={{ color: '#94A3B8' }}>
                 Available Seats
               </label>
               <input
@@ -673,7 +667,7 @@ function UpdateTab() {
                 value={form.availableSeats}
                 onChange={(e) => setForm((p) => ({ ...p, availableSeats: e.target.value }))}
                 min="0"
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-3 py-2.5 text-sm"
               />
             </div>
           </div>
@@ -681,7 +675,7 @@ function UpdateTab() {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="btn-accent px-6 py-2.5 text-sm"
           >
             {submitting ? 'Updating…' : 'Update Scheduled Flight'}
           </button>
@@ -693,12 +687,16 @@ function UpdateTab() {
 
 /* ─── Shared helper ─── */
 function Alert({ type, message }) {
-  const styles =
-    type === 'error'
-      ? 'bg-red-50 border-red-200 text-red-600'
-      : 'bg-green-50 border-green-200 text-green-600';
+  const isError = type === 'error';
   return (
-    <div className={`mb-4 p-3 border rounded-lg text-sm ${styles}`}>
+    <div
+      className="mb-4 p-3 rounded-lg text-sm"
+      style={{
+        background: isError ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+        border: `1px solid ${isError ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
+        color: isError ? '#fca5a5' : '#6ee7b7'
+      }}
+    >
       {message}
     </div>
   );

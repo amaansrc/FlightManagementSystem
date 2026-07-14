@@ -32,10 +32,10 @@ export default function BookingFormPage() {
   if (!scheduledFlight) {
     return (
       <div className="px-4 py-8 max-w-3xl mx-auto text-center">
-        <p className="text-slate-500 text-lg">No flight selected.</p>
+        <p className="text-lg" style={{ color: '#94A3B8' }}>No flight selected.</p>
         <button
           onClick={() => navigate('/flights/search')}
-          className="mt-4 bg-primary text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark cursor-pointer"
+          className="mt-4 btn-accent px-6 py-2 text-sm"
         >
           Search Flights
         </button>
@@ -124,7 +124,7 @@ export default function BookingFormPage() {
 
   return (
     <div className="px-4 py-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Booking Details</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Booking Details</h1>
 
       {/* Flight summary */}
       <div className="mb-6">
@@ -132,9 +132,16 @@ export default function BookingFormPage() {
       </div>
 
       {/* Booking form */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="glass-card p-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          <div
+            className="mb-4 p-3 rounded-xl text-sm"
+            style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              color: '#fca5a5',
+            }}
+          >
             {error}
           </div>
         )}
@@ -143,14 +150,15 @@ export default function BookingFormPage() {
           {/* Passenger list */}
           <div className="space-y-4 mb-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-white">
                 Passengers ({passengers.length})
               </h2>
               <button
                 type="button"
                 onClick={addPassenger}
                 disabled={passengers.length >= maxPassengers}
-                className="text-sm text-primary hover:text-primary-dark bg-transparent border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-sm bg-transparent border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                style={{ color: '#3B82F6' }}
               >
                 + Add Passenger
               </button>
@@ -168,25 +176,25 @@ export default function BookingFormPage() {
             ))}
 
             {passengers.length >= maxPassengers && (
-              <p className="text-xs text-amber-600">
+              <p className="text-xs" style={{ color: '#F59E0B' }}>
                 Maximum {maxPassengers} passengers for this flight.
               </p>
             )}
           </div>
 
           {/* Cost summary */}
-          <div className="border-t border-slate-200 pt-4 mb-6">
-            <div className="flex justify-between text-sm text-slate-600">
+          <div className="pt-4 mb-6" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="flex justify-between text-sm" style={{ color: '#94A3B8' }}>
               <span>Ticket price per passenger</span>
               <span>₹{scheduledFlight.ticketCost?.toLocaleString('en-IN')}</span>
             </div>
-            <div className="flex justify-between text-sm text-slate-600 mt-1">
+            <div className="flex justify-between text-sm mt-1" style={{ color: '#94A3B8' }}>
               <span>Number of passengers</span>
               <span>× {passengers.length}</span>
             </div>
-            <div className="flex justify-between text-base font-bold text-slate-800 mt-2 pt-2 border-t border-slate-100">
+            <div className="flex justify-between text-base font-bold text-white mt-2 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
               <span>Total</span>
-              <span>₹{((scheduledFlight.ticketCost || 0) * passengers.length).toLocaleString('en-IN')}</span>
+              <span style={{ color: '#3B82F6' }}>₹{((scheduledFlight.ticketCost || 0) * passengers.length).toLocaleString('en-IN')}</span>
             </div>
           </div>
 
@@ -194,7 +202,7 @@ export default function BookingFormPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-primary text-white py-3 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="btn-accent w-full py-3 text-sm"
           >
             {submitting ? 'Confirming booking…' : 'Confirm Booking'}
           </button>

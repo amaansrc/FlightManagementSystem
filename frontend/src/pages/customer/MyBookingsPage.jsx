@@ -43,17 +43,24 @@ export default function MyBookingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-slate-500">Loading your bookings…</p>
+        <p style={{ color: '#94A3B8' }}>Loading your bookings…</p>
       </div>
     );
   }
 
   return (
     <div className="px-4 py-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">My Bookings</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">My Bookings</h1>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div
+          className="mb-4 p-3 rounded-xl text-sm"
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            color: '#fca5a5',
+          }}
+        >
           {error}
         </div>
       )}
@@ -68,11 +75,14 @@ export default function MyBookingsPage() {
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer border-none transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
               filter === tab.key
-                ? 'bg-primary text-white'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-[#0059FF] text-white border-transparent'
+                : 'bg-transparent text-white border hover:bg-white/5'
             }`}
+            style={{
+              borderColor: filter === tab.key ? 'transparent' : 'rgba(255,255,255,0.2)',
+            }}
           >
             {tab.label}
           </button>
@@ -81,8 +91,8 @@ export default function MyBookingsPage() {
 
       {/* Booking list */}
       {filteredBookings.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
-          <p className="text-slate-500 text-lg">
+        <div className="text-center py-12 glass-card">
+          <p className="text-lg text-white">
             {bookings.length === 0
               ? 'You have no bookings yet.'
               : 'No bookings match this filter.'}
