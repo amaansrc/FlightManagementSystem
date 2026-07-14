@@ -59,8 +59,8 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
     }
 
     @Override
-    public ScheduledFlight viewScheduledFlights(BigInteger flightNumber) {
-        return scheduledFlightDao.viewScheduledFlights(flightNumber);
+    public ScheduledFlight viewScheduledFlights(BigInteger scheduledFlightId) {
+        return scheduledFlightDao.viewScheduledFlights(scheduledFlightId);
     }
 
     @Override
@@ -69,21 +69,23 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
     }
 
     @Override
-    public ScheduledFlight modifyScheduledFlight(Flight flight, Schedule schedule, Integer availableSeats) {
-        // Validate the flight exists
-        if (flight == null || flight.getFlightNumber() == null) {
+    public ScheduledFlight modifyScheduledFlight(ScheduledFlight scheduledFlight) {
+        if (scheduledFlight == null || scheduledFlight.getScheduledFlightId() == null) {
+            throw new ValidationException("Scheduled flight ID is required.");
+        }
+        if (scheduledFlight.getFlight() == null || scheduledFlight.getFlight().getFlightNumber() == null) {
             throw new ValidationException("Flight information is required.");
         }
-        flightDao.viewFlight(flight.getFlightNumber()); // throws RecordNotFoundException if not found
+        flightDao.viewFlight(scheduledFlight.getFlight().getFlightNumber()); // throws RecordNotFoundException if not found
 
         // Validate the schedule
-        validateSchedule(schedule);
+        validateSchedule(scheduledFlight.getSchedule());
 
-        if (availableSeats == null || availableSeats < 0) {
+        if (scheduledFlight.getAvailableSeats() == null || scheduledFlight.getAvailableSeats() < 0) {
             throw new ValidationException("Available seats must be 0 or greater.");
         }
 
-        return scheduledFlightDao.modifyScheduledFlight(flight, schedule, availableSeats);
+        return scheduledFlightDao.modifyScheduledFlight(scheduledFlight);
     }
 
     @Override

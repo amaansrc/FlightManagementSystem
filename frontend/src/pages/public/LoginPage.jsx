@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { Eye, EyeOff, Plane } from 'lucide-react';
 
 /**
- * Login page — username + password form.
+ * Login page — NovaPay dark glassmorphic design.
  * On success, redirects to /dashboard (CUSTOMER) or /admin (ADMIN).
  */
 export default function LoginPage() {
@@ -13,6 +14,7 @@ export default function LoginPage() {
 
   const [userName, setUserName] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -26,7 +28,6 @@ export default function LoginPage() {
 
     try {
       const user = await login(userName.trim(), userPassword);
-      // Redirect based on role, or to the originally intended page
       const from = location.state?.from?.pathname;
       if (from) {
         navigate(from, { replace: true });
@@ -44,15 +45,28 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-[70vh] px-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-slate-800">Welcome Back</h1>
-          <p className="text-slate-500 mt-1">Sign in to your account</p>
+        <div className="text-center mb-8 animate-float-up" style={{ animationDelay: '0.1s' }}>
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: 'rgba(0, 89, 255, 0.15)' }}>
+            <Plane className="w-7 h-7" style={{ color: '#3B82F6' }} />
+          </div>
+          <h1 className="text-3xl font-semibold text-white">Welcome Back</h1>
+          <p className="mt-2" style={{ color: '#94A3B8' }}>Sign in to your FlightBook account</p>
         </div>
 
         {/* Form card */}
-        <div className="bg-white rounded-xl border border-slate-200 p-8">
+        <div
+          className="glass-card p-8 animate-float-up"
+          style={{ animationDelay: '0.2s' }}
+        >
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div
+              className="mb-4 p-3 rounded-xl text-sm"
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                color: '#fca5a5',
+              }}
+            >
               {error}
             </div>
           )}
@@ -60,7 +74,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Username */}
             <div>
-              <label htmlFor="userName" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userName" className="block text-sm font-medium mb-2" style={{ color: '#94A3B8' }}>
                 Username
               </label>
               <input
@@ -69,39 +83,52 @@ export default function LoginPage() {
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 placeholder="Enter your username"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
+                className="glass-input w-full px-4 py-3 text-sm"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="userPassword" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="userPassword" className="block text-sm font-medium mb-2" style={{ color: '#94A3B8' }}>
                 Password
               </label>
-              <input
-                id="userPassword"
-                type="password"
-                value={userPassword}
-                onChange={(e) => setUserPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-light focus:border-transparent"
-              />
+              <div className="relative">
+                <input
+                  id="userPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  value={userPassword}
+                  onChange={(e) => setUserPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="glass-input w-full px-4 py-3 pr-12 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 flex items-center bg-transparent border-none cursor-pointer"
+                  style={{ color: '#94A3B8' }}
+                >
+                  {showPassword
+                    ? <EyeOff className="w-5 h-5 hover:text-white transition-colors" />
+                    : <Eye className="w-5 h-5 hover:text-white transition-colors" />
+                  }
+                </button>
+              </div>
             </div>
 
             {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-dark disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              className="btn-accent w-full py-3 text-sm"
             >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
 
           {/* Sign up link */}
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm mt-6" style={{ color: '#94A3B8' }}>
             Don't have an account?{' '}
-            <Link to="/signup" className="text-primary font-medium hover:underline">
+            <Link to="/signup" className="font-medium hover:underline transition-colors" style={{ color: '#3B82F6' }}>
               Sign up
             </Link>
           </p>

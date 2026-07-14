@@ -1,6 +1,7 @@
 HELP.md
 **/.DS_Store
 target/
+/rtf files/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

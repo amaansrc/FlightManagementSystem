@@ -135,12 +135,12 @@ public class ScheduledFlightDaoImpl implements ScheduledFlightDao {
     }
 
     @Override
-    public ScheduledFlight viewScheduledFlights(BigInteger flightNumber) {
+    public ScheduledFlight viewScheduledFlights(BigInteger scheduledFlightId) {
         String sql = BASE_SELECT
-                + "WHERE sf.flight_number = ? AND sf.schedule_flight_state = 'ACTIVE'";
-        List<ScheduledFlight> list = jdbcTemplate.query(sql, SF_ROW_MAPPER, flightNumber.longValue());
+                + "WHERE sf.schedule_flight_id = ? AND sf.schedule_flight_state = 'ACTIVE'";
+        List<ScheduledFlight> list = jdbcTemplate.query(sql, SF_ROW_MAPPER, scheduledFlightId.longValue());
         if (list.isEmpty()) {
-            throw new RecordNotFoundException("ScheduledFlight with flight number", flightNumber);
+            throw new RecordNotFoundException("ScheduledFlight with ID", scheduledFlightId);
         }
         return list.get(0);
     }
@@ -152,8 +152,12 @@ public class ScheduledFlightDaoImpl implements ScheduledFlightDao {
     }
 
     @Override
-    public ScheduledFlight modifyScheduledFlight(Flight flight, Schedule schedule, int availableSeats) {
+    public ScheduledFlight modifyScheduledFlight(ScheduledFlight scheduledFlight) {
+        // Fetch existing to get the schedule_id
+        ScheduledFlight existing = viewScheduledFlights(scheduledFlight.getScheduledFlightId());
+
         // Update the schedule
+        Schedule schedule = scheduledFlight.getSchedule();
         String updateScheduleSql = "UPDATE schedule SET source_airport = ?, destination_airport = ?, "
                 + "departure_date_time = ?, arrival_date_time = ? WHERE schedule_id = ?";
         jdbcTemplate.update(updateScheduleSql,
@@ -161,22 +165,23 @@ public class ScheduledFlightDaoImpl implements ScheduledFlightDao {
                 schedule.getDestinationAirport().getAirportCode(),
                 java.sql.Timestamp.valueOf(schedule.getDepartureTime()),
                 java.sql.Timestamp.valueOf(schedule.getArrivalTime()),
-                schedule.getScheduleId().longValue());
+                existing.getSchedule().getScheduleId().longValue());
 
         // Update the scheduled_flight
-        String updateSfSql = "UPDATE scheduled_flight SET available_seats = ? "
-                + "WHERE flight_number = ? AND schedule_id = ? AND schedule_flight_state = 'ACTIVE'";
+        String updateSfSql = "UPDATE scheduled_flight SET available_seats = ?, ticket_cost = ?, flight_number = ? "
+                + "WHERE schedule_flight_id = ? AND schedule_flight_state = 'ACTIVE'";
         int rows = jdbcTemplate.update(updateSfSql,
-                availableSeats,
-                flight.getFlightNumber().longValue(),
-                schedule.getScheduleId().longValue());
+                scheduledFlight.getAvailableSeats(),
+                scheduledFlight.getTicketCost(),
+                scheduledFlight.getFlight().getFlightNumber().longValue(),
+                scheduledFlight.getScheduledFlightId().longValue());
 
         if (rows == 0) {
-            throw new RecordNotFoundException("ScheduledFlight with flight number", flight.getFlightNumber());
+            throw new RecordNotFoundException("ScheduledFlight with ID", scheduledFlight.getScheduledFlightId());
         }
 
         // Return the updated scheduled flight
-        return viewScheduledFlights(flight.getFlightNumber());
+        return viewScheduledFlights(scheduledFlight.getScheduledFlightId());
     }
 
     @Override

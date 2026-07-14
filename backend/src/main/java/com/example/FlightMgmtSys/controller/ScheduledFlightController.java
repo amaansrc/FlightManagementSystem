@@ -77,12 +77,12 @@ public class ScheduledFlightController {
     }
 
     /**
-     * View a scheduled flight by its flight number.
+     * View a scheduled flight by its ID.
      */
-    @GetMapping("/{flightNumber}")
-    public ResponseEntity<ScheduledFlight> viewByFlightNumber(
-            @PathVariable("flightNumber") BigInteger flightNumber) {
-        return ResponseEntity.ok(scheduledFlightService.viewScheduledFlights(flightNumber));
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduledFlight> viewById(
+            @PathVariable("id") BigInteger id) {
+        return ResponseEntity.ok(scheduledFlightService.viewScheduledFlights(id));
     }
 
     /**
@@ -95,17 +95,14 @@ public class ScheduledFlightController {
 
     /**
      * Modify a scheduled flight. Admin only.
-     * Expects a ScheduledFlight JSON with nested Flight (flightNumber),
-     * Schedule (full details), and availableSeats.
+     * Expects a ScheduledFlight JSON with scheduledFlightId and nested Flight,
+     * Schedule, etc.
      */
     @AdminOnly
     @PutMapping
     public ResponseEntity<ScheduledFlight> modifyScheduledFlight(
             @RequestBody ScheduledFlight scheduledFlight) {
-        ScheduledFlight modified = scheduledFlightService.modifyScheduledFlight(
-                scheduledFlight.getFlight(),
-                scheduledFlight.getSchedule(),
-                scheduledFlight.getAvailableSeats());
+        ScheduledFlight modified = scheduledFlightService.modifyScheduledFlight(scheduledFlight);
         return ResponseEntity.ok(modified);
     }
 

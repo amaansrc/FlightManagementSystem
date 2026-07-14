@@ -1,0 +1,44 @@
+/* ══════════════════════════════════════════════════════════
+   SideMenu — NovaPay dark-palette overrides for StaggeredMenu
+   ══════════════════════════════════════════════════════════ */
+
+/* Dark panel background instead of white */
+.flightbook-side-menu .staggered-menu-panel {
+  background: #030923;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Menu item text → white */
+.flightbook-side-menu .sm-panel-item {
+  color: #fff;
+}
+
+.flightbook-side-menu .sm-panel-item:hover {
+  color: #3B82F6;
+}
+
+/* Social links → light text */
+.flightbook-side-menu .sm-socials-link {
+  color: #94A3B8;
+}
+
+.flightbook-side-menu .sm-socials-link:hover {
+  color: #3B82F6;
+}
+
+/* Hide the logo in side menu (we have the navbar logo instead) */
+.flightbook-side-menu .sm-logo {
+  display: none;
+}
+
+/* On mobile, don't invert logo since we hide it */
+@media (max-width: 1024px) {
+  .flightbook-side-menu[data-open] .sm-logo-img {
+    filter: none;
+  }
+}
+
+/* Only show the toggle button below md breakpoint — desktop uses the NavBar toggle */
+.flightbook-side-menu .staggered-menu-header {
+  display: none;
+}

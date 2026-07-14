@@ -17,12 +17,11 @@ public interface ScheduledFlightService {
     ScheduledFlight scheduleFlight(ScheduledFlight scheduledFlight);
 
     List<ScheduledFlight> viewScheduledFlights(Airport source, Airport destination, LocalDate date);
-
-    ScheduledFlight viewScheduledFlights(BigInteger flightNumber);
+    ScheduledFlight viewScheduledFlights(BigInteger scheduledFlightId);
 
     List<ScheduledFlight> viewScheduledFlight();
 
-    ScheduledFlight modifyScheduledFlight(Flight flight, Schedule schedule, Integer availableSeats);
+    ScheduledFlight modifyScheduledFlight(ScheduledFlight scheduledFlight);
 
     void deleteScheduledFlight(BigInteger scheduledFlightId);
 

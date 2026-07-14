@@ -18,11 +18,11 @@ public interface ScheduledFlightDao {
 
     List<ScheduledFlight> viewScheduledFlights(Airport source, Airport destination, LocalDate date);
 
-    ScheduledFlight viewScheduledFlights(BigInteger flightNumber);
+    ScheduledFlight viewScheduledFlights(BigInteger scheduledFlightId);
 
     List<ScheduledFlight> viewScheduledFlight();
 
-    ScheduledFlight modifyScheduledFlight(Flight flight, Schedule schedule, int availableSeats);
+    ScheduledFlight modifyScheduledFlight(ScheduledFlight scheduledFlight);
 
     void deleteScheduledFlight(BigInteger scheduledFlightId);
 }
