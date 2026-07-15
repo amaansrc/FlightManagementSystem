@@ -8,6 +8,7 @@ import com.example.FlightMgmtSys.model.Passenger;
 import com.example.FlightMgmtSys.model.ScheduledFlight;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,6 +27,7 @@ import java.util.List;
  * - Ticket cost is auto-calculated as: scheduledFlight.ticketCost × noOfPassengers.
  */
 @Service
+@Transactional
 public class BookingServiceImpl implements BookingService {
 
     private final BookingDao bookingDao;

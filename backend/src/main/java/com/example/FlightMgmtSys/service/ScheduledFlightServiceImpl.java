@@ -11,6 +11,7 @@ import com.example.FlightMgmtSys.model.Schedule;
 import com.example.FlightMgmtSys.model.ScheduledFlight;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ import java.util.List;
  * - Ticket cost must be > 0.
  */
 @Service
+@Transactional
 public class ScheduledFlightServiceImpl implements ScheduledFlightService {
 
     private final ScheduledFlightDao scheduledFlightDao;
@@ -47,6 +49,7 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
     @Override
     public ScheduledFlight scheduleFlight(ScheduledFlight scheduledFlight) {
         validateScheduledFlight(scheduledFlight);
+        validateBuffer(scheduledFlight);
         return scheduledFlightDao.scheduleFlight(scheduledFlight);
     }
 
@@ -76,7 +79,7 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
         if (scheduledFlight.getFlight() == null || scheduledFlight.getFlight().getFlightNumber() == null) {
             throw new ValidationException("Flight information is required.");
         }
-        flightDao.viewFlight(scheduledFlight.getFlight().getFlightNumber()); // throws RecordNotFoundException if not found
+        Flight flight = flightDao.viewFlight(scheduledFlight.getFlight().getFlightNumber()); // throws RecordNotFoundException if not found
 
         // Validate the schedule
         validateSchedule(scheduledFlight.getSchedule());
@@ -84,6 +87,12 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
         if (scheduledFlight.getAvailableSeats() == null || scheduledFlight.getAvailableSeats() < 0) {
             throw new ValidationException("Available seats must be 0 or greater.");
         }
+        
+        if (scheduledFlight.getAvailableSeats() > flight.getSeatCapacity()) {
+            throw new ValidationException("Available seats (" + scheduledFlight.getAvailableSeats() + ") cannot exceed flight seat capacity (" + flight.getSeatCapacity() + ").");
+        }
+
+        validateBuffer(scheduledFlight);
 
         return scheduledFlightDao.modifyScheduledFlight(scheduledFlight);
     }
@@ -103,7 +112,7 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
         if (scheduledFlight.getFlight() == null || scheduledFlight.getFlight().getFlightNumber() == null) {
             throw new ValidationException("Flight information is required for scheduling.");
         }
-        flightDao.viewFlight(scheduledFlight.getFlight().getFlightNumber());
+        Flight flight = flightDao.viewFlight(scheduledFlight.getFlight().getFlightNumber());
 
         // Validate schedule
         validateSchedule(scheduledFlight.getSchedule());
@@ -111,6 +120,10 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
         // Validate available seats
         if (scheduledFlight.getAvailableSeats() == null || scheduledFlight.getAvailableSeats() < 0) {
             throw new ValidationException("Available seats must be 0 or greater.");
+        }
+        
+        if (scheduledFlight.getAvailableSeats() > flight.getSeatCapacity()) {
+            throw new ValidationException("Available seats (" + scheduledFlight.getAvailableSeats() + ") cannot exceed flight seat capacity (" + flight.getSeatCapacity() + ").");
         }
 
         // Validate ticket cost
@@ -178,6 +191,47 @@ public class ScheduledFlightServiceImpl implements ScheduledFlightService {
         } catch (RecordNotFoundException e) {
             throw new ValidationException(
                     "Airport with code '" + airportCode + "' does not exist in the database.");
+        }
+    }
+
+    /**
+     * Enforces the 24-hour buffer rule: A new schedule for the same flight number
+     * must either arrive at least 24 hours before an existing departure, or depart
+     * at least 24 hours after an existing arrival.
+     */
+    private void validateBuffer(ScheduledFlight scheduledFlight) {
+        BigInteger flightNumber = scheduledFlight.getFlight().getFlightNumber();
+        BigInteger currentId = scheduledFlight.getScheduledFlightId();
+
+        LocalDateTime newDep = scheduledFlight.getSchedule().getDepartureTime();
+        LocalDateTime newArr = scheduledFlight.getSchedule().getArrivalTime();
+
+        List<ScheduledFlight> existingFlights = scheduledFlightDao.viewScheduledFlight();
+        for (ScheduledFlight existing : existingFlights) {
+            // Skip the current scheduled flight being modified
+            if (currentId != null && currentId.equals(existing.getScheduledFlightId())) {
+                continue;
+            }
+            
+            // Only compare schedules for the SAME flight number
+            if (!existing.getFlight().getFlightNumber().equals(flightNumber)) {
+                continue;
+            }
+
+            LocalDateTime existingDep = existing.getSchedule().getDepartureTime();
+            LocalDateTime existingArr = existing.getSchedule().getArrivalTime();
+
+            LocalDateTime bufferedStart = existingDep.minusHours(24);
+            LocalDateTime bufferedEnd = existingArr.plusHours(24);
+
+            // Check conflict
+            if (!(newArr.isBefore(bufferedStart) || newArr.isEqual(bufferedStart) ||
+                  newDep.isAfter(bufferedEnd) || newDep.isEqual(bufferedEnd))) {
+                throw new ValidationException(
+                    "Flight scheduling conflict: A 24-hour buffer is required for flight " + flightNumber + ". " +
+                    "Existing schedule departs at " + existingDep + " and arrives at " + existingArr + "."
+                );
+            }
         }
     }
 }

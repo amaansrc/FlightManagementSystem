@@ -199,7 +199,7 @@ public class ScheduledFlightDaoImpl implements ScheduledFlightDao {
      * Used internally by BookingDaoImpl.
      */
     public ScheduledFlight viewScheduledFlightById(BigInteger scheduledFlightId) {
-        String sql = BASE_SELECT + "WHERE sf.schedule_flight_id = ? AND sf.schedule_flight_state = 'ACTIVE'";
+        String sql = BASE_SELECT + "WHERE sf.schedule_flight_id = ?";
         List<ScheduledFlight> list = jdbcTemplate.query(sql, SF_ROW_MAPPER, scheduledFlightId.longValue());
         if (list.isEmpty()) {
             throw new RecordNotFoundException("ScheduledFlight", scheduledFlightId);

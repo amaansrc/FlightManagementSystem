@@ -3,8 +3,11 @@ package com.example.FlightMgmtSys.service;
 import com.example.FlightMgmtSys.dao.FlightDao;
 import com.example.FlightMgmtSys.exception.ValidationException;
 import com.example.FlightMgmtSys.model.Flight;
+import com.example.FlightMgmtSys.model.Booking;
+import com.example.FlightMgmtSys.model.ScheduledFlight;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -18,12 +21,17 @@ import java.util.List;
  * - flightModel and carrierName must not be null or blank.
  */
 @Service
+@Transactional
 public class FlightServiceImpl implements FlightService {
 
     private final FlightDao flightDao;
+    private final ScheduledFlightService scheduledFlightService;
+    private final BookingService bookingService;
 
-    public FlightServiceImpl(FlightDao flightDao) {
+    public FlightServiceImpl(FlightDao flightDao, ScheduledFlightService scheduledFlightService, BookingService bookingService) {
         this.flightDao = flightDao;
+        this.scheduledFlightService = scheduledFlightService;
+        this.bookingService = bookingService;
     }
 
     @Override
@@ -50,6 +58,32 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public void deleteFlight(BigInteger flightNumber) {
+        // 1. Find all scheduled flights associated with this flight
+        List<ScheduledFlight> relatedScheduledFlights = scheduledFlightService.viewScheduledFlight().stream()
+                .filter(sf -> sf.getFlight().getFlightNumber().equals(flightNumber))
+                .collect(java.util.stream.Collectors.toList());
+
+        for (ScheduledFlight sf : relatedScheduledFlights) {
+            // 2. Find all bookings associated with this scheduled flight
+            List<Booking> relatedBookings = bookingService.viewBooking().stream()
+                    .filter(b -> b.getFlight().getScheduledFlightId().equals(sf.getScheduledFlightId()))
+                    .collect(java.util.stream.Collectors.toList());
+
+            // 3. Cancel each booking
+            for (Booking b : relatedBookings) {
+                // Check if not already cancelled to avoid validation exception
+                if (!"CANCELLED".equals(b.getBookingState())) {
+                    bookingService.deleteBooking(b.getBookingId());
+                }
+            }
+
+            // 4. Inactivate the scheduled flight
+            // Might already be inactive if we run into a state where it's inactive,
+            // but viewScheduledFlight() only returns ACTIVE ones, so this is safe.
+            scheduledFlightService.deleteScheduledFlight(sf.getScheduledFlightId());
+        }
+
+        // 5. Inactivate the main flight
         flightDao.deleteFlight(flightNumber);
     }
 
