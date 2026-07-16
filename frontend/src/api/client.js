@@ -15,6 +15,17 @@ const client = axios.create({
 });
 
 /**
+ * Request interceptor — attach JWT token if available.
+ */
+client.interceptors.request.use((config) => {
+  const token = localStorage.getItem('jwtToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+/**
  * Response interceptor — unwrap the `data` property so callers
  * get the payload directly, and normalize error shapes.
  */

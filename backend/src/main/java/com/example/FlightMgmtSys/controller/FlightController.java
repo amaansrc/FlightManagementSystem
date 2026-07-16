@@ -1,6 +1,6 @@
 package com.example.FlightMgmtSys.controller;
 
-import com.example.FlightMgmtSys.annotation.AdminOnly;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.example.FlightMgmtSys.model.Flight;
 import com.example.FlightMgmtSys.service.FlightService;
 
@@ -40,7 +40,7 @@ public class FlightController {
     /**
      * Add a new flight. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Flight> addFlight(@RequestBody Flight flight) {
         Flight created = flightService.addFlight(flight);
@@ -66,7 +66,7 @@ public class FlightController {
     /**
      * Modify a flight. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<Flight> modifyFlight(@RequestBody Flight flight) {
         return ResponseEntity.ok(flightService.modifyFlight(flight));
@@ -75,7 +75,7 @@ public class FlightController {
     /**
      * Delete a flight. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{flightNumber}")
     public ResponseEntity<Void> deleteFlight(@PathVariable("flightNumber") BigInteger flightNumber) {
         flightService.deleteFlight(flightNumber);

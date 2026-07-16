@@ -1,40 +1,28 @@
 package com.example.FlightMgmtSys.controller;
 
-import com.example.FlightMgmtSys.annotation.AdminOnly;
 import com.example.FlightMgmtSys.dao.UserDaoImpl;
 import com.example.FlightMgmtSys.exception.ValidationException;
 import com.example.FlightMgmtSys.model.User;
+import com.example.FlightMgmtSys.security.CustomUserDetails;
+import com.example.FlightMgmtSys.security.CustomUserDetailsService;
+import com.example.FlightMgmtSys.security.JwtUtil;
 import com.example.FlightMgmtSys.service.UserService;
-
-import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST controller for User management.
- *
- * <p>Public endpoints (no auth required):
- * <ul>
- *   <li>POST /api/users/register — customer self-registration</li>
- *   <li>POST /api/users/login — login and create session</li>
- * </ul>
- *
- * <p>Authenticated endpoints:
- * <ul>
- *   <li>GET  /api/users/{id} — view user by ID</li>
- *   <li>PUT  /api/users — update user details</li>
- * </ul>
- *
- * <p>Admin-only endpoints:
- * <ul>
- *   <li>GET    /api/users — view all users</li>
- *   <li>DELETE /api/users/{id} — delete a user</li>
- * </ul>
  */
 @RestController
 @RequestMapping("/api/users")
@@ -42,10 +30,18 @@ public class UserController {
 
     private final UserService userService;
     private final UserDaoImpl userDao;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
-    public UserController(UserService userService, UserDaoImpl userDao) {
+    public UserController(UserService userService, UserDaoImpl userDao, 
+                          AuthenticationManager authenticationManager, 
+                          JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.userService = userService;
         this.userDao = userDao;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
     }
 
     /**
@@ -61,21 +57,33 @@ public class UserController {
     }
 
     /**
-     * Login with username and password. Stores the user in the HTTP session.
+     * Login with username and password. Returns a JWT.
      */
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User loginRequest, HttpSession session) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody User loginRequest) {
         if (loginRequest.getUserName() == null || loginRequest.getUserPassword() == null) {
             throw new ValidationException("Username and password are required.");
         }
-        User user = userDao.findByUsernameAndPassword(
-                loginRequest.getUserName(), loginRequest.getUserPassword());
-        if (user == null) {
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getUserPassword())
+            );
+        } catch (Exception e) {
             throw new ValidationException("Invalid username or password.");
         }
-        session.setAttribute("loggedInUser", user);
-        user.setUserPassword(null);
-        return ResponseEntity.ok(user);
+
+        final CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(loginRequest.getUserName());
+        final String jwt = jwtUtil.generateToken(userDetails);
+
+        User loggedInUser = userDetails.getUser();
+        loggedInUser.setUserPassword(null); // Ensure password is not sent
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", jwt);
+        response.put("user", loggedInUser);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -91,7 +99,7 @@ public class UserController {
     /**
      * View all users. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<User>> viewAllUsers() {
         List<User> users = userService.viewUser();
@@ -112,19 +120,10 @@ public class UserController {
     /**
      * Delete a user by ID. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") BigInteger id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Logout — invalidate the current session.
-     */
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok().build();
     }
 }

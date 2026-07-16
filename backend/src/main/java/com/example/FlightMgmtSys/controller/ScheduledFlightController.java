@@ -1,6 +1,6 @@
 package com.example.FlightMgmtSys.controller;
 
-import com.example.FlightMgmtSys.annotation.AdminOnly;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.example.FlightMgmtSys.model.Airport;
 import com.example.FlightMgmtSys.model.ScheduledFlight;
 import com.example.FlightMgmtSys.service.ScheduledFlightService;
@@ -47,7 +47,7 @@ public class ScheduledFlightController {
      * Schedule a new flight. Admin only.
      * Expects a full ScheduledFlight JSON with nested Flight and Schedule objects.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ScheduledFlight> scheduleFlight(@RequestBody ScheduledFlight scheduledFlight) {
         ScheduledFlight created = scheduledFlightService.scheduleFlight(scheduledFlight);
@@ -98,7 +98,7 @@ public class ScheduledFlightController {
      * Expects a ScheduledFlight JSON with scheduledFlightId and nested Flight,
      * Schedule, etc.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<ScheduledFlight> modifyScheduledFlight(
             @RequestBody ScheduledFlight scheduledFlight) {
@@ -109,7 +109,7 @@ public class ScheduledFlightController {
     /**
      * Delete a scheduled flight. Admin only.
      */
-    @AdminOnly
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteScheduledFlight(@PathVariable("id") BigInteger id) {
         scheduledFlightService.deleteScheduledFlight(id);

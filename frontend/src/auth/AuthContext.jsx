@@ -22,9 +22,11 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (userName, userPassword) => {
     setLoading(true);
     try {
-      const loggedInUser = await usersApi.login(userName, userPassword);
-      setUser(loggedInUser);
-      return loggedInUser;
+      const response = await usersApi.login(userName, userPassword);
+      // The backend now returns { token: "...", user: { ... } }
+      localStorage.setItem('jwtToken', response.token);
+      setUser(response.user);
+      return response.user;
     } finally {
       setLoading(false);
     }
@@ -43,10 +45,13 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     setLoading(true);
     try {
-      await usersApi.logout();
+      // It's optional if we still have a backend logout endpoint for tracking,
+      // but JWT is stateless, so local clearing is what really matters.
+      // await usersApi.logout(); 
     } catch {
-      // Even if the server call fails, clear the local state
+      // ignore
     } finally {
+      localStorage.removeItem('jwtToken');
       setUser(null);
       setLoading(false);
     }

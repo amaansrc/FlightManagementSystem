@@ -19,4 +19,8 @@ public interface UserDao {
     User updateUser(User user);
 
     void deleteUser(BigInteger userId);
+
+    User findByUsernameAndPassword(String userName, String userPassword);
+
+    User findByUsername(String userName);
 }

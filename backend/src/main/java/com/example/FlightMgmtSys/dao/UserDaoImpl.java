@@ -110,4 +110,14 @@ public class UserDaoImpl implements UserDao {
         List<User> users = jdbcTemplate.query(sql, USER_ROW_MAPPER, userName, userPassword);
         return users.isEmpty() ? null : users.get(0);
     }
+
+    /**
+     * Finds a user by username.
+     * Returns null if no match found.
+     */
+    public User findByUsername(String userName) {
+        String sql = "SELECT * FROM user WHERE user_name = ? AND user_state = 'ACTIVE'";
+        List<User> users = jdbcTemplate.query(sql, USER_ROW_MAPPER, userName);
+        return users.isEmpty() ? null : users.get(0);
+    }
 }
