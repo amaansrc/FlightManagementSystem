@@ -30,6 +30,7 @@ export default function LandingPage() {
   // Search results
   const [results, setResults] = useState(null);
   const [searching, setSearching] = useState(false);
+  const [sortBy, setSortBy] = useState('');
 
   useEffect(() => {
     const fetchAirports = async () => {
@@ -78,6 +79,21 @@ export default function LandingPage() {
       navigate('/bookings/new', { state: { scheduledFlight } });
     }
   };
+
+  const sortedResults = results ? [...results].sort((a, b) => {
+    if (sortBy === 'PRICE_ASC') {
+      return a.ticketCost - b.ticketCost;
+    }
+    if (sortBy === 'PRICE_DESC') {
+      return b.ticketCost - a.ticketCost;
+    }
+    if (sortBy === 'DURATION_ASC' || sortBy === 'DURATION_DESC') {
+      const durationA = new Date(a.schedule.arrivalTime) - new Date(a.schedule.departureTime);
+      const durationB = new Date(b.schedule.arrivalTime) - new Date(b.schedule.departureTime);
+      return sortBy === 'DURATION_ASC' ? durationA - durationB : durationB - durationA;
+    }
+    return 0;
+  }) : null;
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -241,12 +257,29 @@ export default function LandingPage() {
             </div>
           )}
 
-          {results && results.length > 0 && (
+          {sortedResults && sortedResults.length > 0 && (
             <div className="space-y-4">
-              <p className="text-sm mb-3" style={{ color: '#94A3B8' }}>
-                {results.length} flight{results.length > 1 ? 's' : ''} found
-              </p>
-              {results.map((sf) => (
+              <div className="flex justify-between items-center mb-3">
+                <p className="text-sm" style={{ color: '#94A3B8' }}>
+                  {sortedResults.length} flight{sortedResults.length > 1 ? 's' : ''} found
+                </p>
+                <div className="flex items-center space-x-2">
+                  <label htmlFor="sortLanding" className="text-sm font-medium" style={{ color: '#94A3B8' }}>Sort by:</label>
+                  <select
+                    id="sortLanding"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="glass-select px-3 py-1.5 text-sm rounded-md"
+                  >
+                    <option value="">None</option>
+                    <option value="PRICE_ASC">Price: Low to High</option>
+                    <option value="PRICE_DESC">Price: High to Low</option>
+                    <option value="DURATION_ASC">Duration: Short to Long</option>
+                    <option value="DURATION_DESC">Duration: Long to Short</option>
+                  </select>
+                </div>
+              </div>
+              {sortedResults.map((sf) => (
                 <FlightCard
                   key={sf.scheduledFlightId}
                   scheduledFlight={sf}

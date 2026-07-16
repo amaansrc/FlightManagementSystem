@@ -257,6 +257,9 @@ function ViewAllTab() {
   const [scheduledFlights, setScheduledFlights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetch = async () => {
@@ -302,9 +305,15 @@ function ViewAllTab() {
         <div className="text-center py-12 glass-card">
           <p className="text-white">No scheduled flights found.</p>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {scheduledFlights.map((sf) => (
+      ) : (() => {
+        const totalPages = Math.ceil(scheduledFlights.length / itemsPerPage);
+        const currentFlights = scheduledFlights.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage
+        );
+        return (
+          <div className="space-y-3">
+            {currentFlights.map((sf) => (
             <div
               key={sf.scheduledFlightId}
               className="rounded-xl p-4"
@@ -346,9 +355,35 @@ function ViewAllTab() {
                 <span>{sf.availableSeats} seats</span>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+            ))}
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-6 p-4">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 text-sm rounded-md transition-colors disabled:opacity-50 hover:bg-white/10"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                >
+                  Previous
+                </button>
+                <span className="text-sm font-medium" style={{ color: '#94A3B8' }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 text-sm rounded-md transition-colors disabled:opacity-50 hover:bg-white/10"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }
