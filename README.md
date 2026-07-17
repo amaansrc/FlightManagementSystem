@@ -118,11 +118,13 @@ Soft deletes are used throughout — records are marked `INACTIVE` or `CANCELLED
 
 ## 🔐 Authentication & Authorization (RBAC)
 
-Authentication is **session-based** (no Spring Security):
+Authentication is **JWT-based**, built on **Spring Security**:
 
-- On login, the authenticated `User` is stored in the `HttpSession`.
-- `AuthInterceptor` runs on every request — if there's no active session, it returns `401 Unauthorized`.
-- Sensitive endpoints (creating flights, deleting users, etc.) are marked with a custom `@AdminOnly` annotation. If a logged-in user's role is `CUSTOMER`, the interceptor returns `403 Forbidden`.
+- `SecurityConfig` defines the security filter chain and which endpoints are public vs. protected.
+- On login, the server issues a signed JWT (`JwtUtil`) using an HMAC-SHA key derived from the `jwt.secret` property, valid for 24 hours.
+- `JwtAuthenticationFilter` runs on every request, extracts and validates the token, and populates the Spring Security context.
+- `CustomUserDetailsService` and `CustomUserDetails` integrate the app's `User` model with Spring Security's `UserDetailsService`.
+- Requests without a valid token are rejected with `401 Unauthorized`; role-restricted endpoints (creating flights, deleting users, etc.) return `403 Forbidden` for non-admin users.
 
 ---
 
@@ -132,7 +134,7 @@ Authentication is **session-based** (no Spring Security):
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/users/register` | Register a new customer |
-| POST | `/api/users/login` | Log in (returns session cookie) |
+| POST | `/api/users/login` | Log in (returns JWT token) |
 | GET | `/api/users/{id}` | View user by ID |
 | GET | `/api/users` | View all users *(admin)* |
 | PUT | `/api/users` | Update user |
@@ -192,6 +194,7 @@ Authentication is **session-based** (no Spring Security):
 **Backend**
 - Java 21
 - Spring Boot (Web MVC)
+- Spring Security + JWT (`io.jsonwebtoken` / JJWT)
 - Spring JDBC (`JdbcTemplate`)
 - MySQL
 - Maven
@@ -249,14 +252,14 @@ curl http://localhost:8080/api/airports
 # Register a customer
 curl -X POST http://localhost:8080/api/users/register -H "Content-Type: application/json" -d '{ ... }'
 
-# Log in (saves session cookie)
-curl -c cookies.txt -X POST http://localhost:8080/api/users/login -H "Content-Type: application/json" -d '{ ... }'
+# Log in (returns a JWT)
+curl -X POST http://localhost:8080/api/users/login -H "Content-Type: application/json" -d '{ ... }'
 
-# Search scheduled flights
-curl -b cookies.txt "http://localhost:8080/api/scheduled-flights/search?source=DEL&dest=BOM&date=2026-08-01"
+# Search scheduled flights (pass the JWT as a bearer token)
+curl -H "Authorization: Bearer <token>" "http://localhost:8080/api/scheduled-flights/search?source=DEL&dest=BOM&date=2026-08-01"
 
 # Create a booking
-curl -b cookies.txt -X POST http://localhost:8080/api/bookings -H "Content-Type: application/json" -d '{ ... }'
+curl -H "Authorization: Bearer <token>" -X POST http://localhost:8080/api/bookings -H "Content-Type: application/json" -d '{ ... }'
 ```
 
 ---
