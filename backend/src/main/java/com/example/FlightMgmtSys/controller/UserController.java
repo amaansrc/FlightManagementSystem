@@ -3,6 +3,7 @@ package com.example.FlightMgmtSys.controller;
 import com.example.FlightMgmtSys.dao.UserDaoImpl;
 import com.example.FlightMgmtSys.exception.ValidationException;
 import com.example.FlightMgmtSys.model.User;
+import com.example.FlightMgmtSys.model.LoginRequest;
 import com.example.FlightMgmtSys.security.CustomUserDetails;
 import com.example.FlightMgmtSys.security.CustomUserDetailsService;
 import com.example.FlightMgmtSys.security.JwtUtil;
@@ -60,7 +61,7 @@ public class UserController {
      * Login with username and password. Returns a JWT.
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody User loginRequest) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
         if (loginRequest.getUserName() == null || loginRequest.getUserPassword() == null) {
             throw new ValidationException("Username and password are required.");
         }
